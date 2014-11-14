@@ -1,0 +1,9 @@
+*.exe
+*.xls
+*.xlsx
+*.csv
+*.txt
+*.o
+*.layout
+*.dev
+*.win
