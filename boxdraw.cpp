@@ -143,25 +143,34 @@ int **BoxDraw::render(FILE *f) {
 
     //test output
     for (int i = 1; i < (height + 1) * 2; ++i) {
-        for (int j = 1; j < (width + 1) * 2; ++j) {
-            if ((i & 1) || (j & 1)) {
-                fprintf(f, "%s", _char_map[arr[i][j]]);
-            } else {
-                if (show_mode == SHOW_LV) {
-                    fprintf(f, "%d ", arr[i][j]);
-                } else if (show_mode == SHOW_LVCHAR) {
-                    if (lvchar[arr[i][j]]) {
-                        //cout << endl << i << " " << j << " " << arr[i][j] << endl;
-                        fprintf(f, "%s", lvchar[arr[i][j]]);
+        int irep = 1;
+        if (!(1 & i)) irep = rheight[i >> 1];
+        for (int ii = 0; ii < irep; ++ii) {
+            for (int j = 1; j < (width + 1) * 2; ++j) {
+                int jrep = 1;
+                if (!(1 & j)) jrep = cwidth[j >> 1];
+                for (int jj = 0; jj < jrep; ++jj) {
+                    if ((i & 1) || (j & 1)) {
+                        fprintf(f, "%s", _char_map[arr[i][j]]);
                     } else {
-                        fprintf(f, "  ");
+                        if (show_mode == SHOW_LV) {
+                            fprintf(f, "%d ", arr[i][j]);
+                        } else if (show_mode == SHOW_LVCHAR) {
+                            if (content[i >> 1][j >> 1] != NULL && !ii) {
+                                fprintf(f, "%c%c", content[i >> 1][j >> 1][jj*2], content[i >> 1][j >> 1][jj*2 + 1]);
+                            } else if (lvchar[arr[i][j]]) {
+                                fprintf(f, "%s", lvchar[arr[i][j]]);
+                            } else {
+                                fprintf(f, "  ");
+                            }
+                        } else {
+                            fprintf(f, "  ");
+                        }
                     }
-                } else {
-                    fprintf(f, "  ");
                 }
             }
+            fprintf(f, "\n");
         }
-        fprintf(f, "\n");
     }
 }
 
@@ -169,15 +178,16 @@ void BoxDraw::setColWidth(int idx, int width) {
     cwidth[idx] = width;
 }
 
-void BoxDraw::setRowHeight(int idx, int Height) {
+void BoxDraw::setRowHeight(int idx, int height) {
     rheight[idx] = height;
 }
 
-void BoxDraw::setGridContent(int x, int y, const char *con, int len = -1) {
+void BoxDraw::setGridContent(int x, int y, const char *con, int len) {
     if (content[x][y] != NULL)
         delete[] content[x][y];
     content[x][y] = strdup(con);
     if (len < 0) len = strlen(con);
+    len = (len + 1) >> 1;
     if (len > cwidth[y]) cwidth[y] = len;
         
 }
