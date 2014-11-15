@@ -44,7 +44,7 @@ public:
     void setBorder(grid_t lv1, grid_t lv2, int lineStyle);
     void setColWidth(int idx, int width);
     void setRowHeight(int idx, int height);
-    void setGridContent(int x, int y, const char *con, int len = -1);
+    void setGridContent(int x, int y, const char *con, int len = -1 );
     
     int **render(FILE* f);
     void finalize();

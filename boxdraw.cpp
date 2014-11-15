@@ -149,22 +149,31 @@ int **BoxDraw::render(FILE *f) {
             for (int j = 1; j < (width + 1) * 2; ++j) {
                 int jrep = 1;
                 if (!(1 & j)) jrep = cwidth[j >> 1];
+                char *con = content[i >> 1][j >> 1];
                 for (int jj = 0; jj < jrep; ++jj) {
                     if ((i & 1) || (j & 1)) {
                         fprintf(f, "%s", _char_map[arr[i][j]]);
                     } else {
-                        if (show_mode == SHOW_LV) {
-                            fprintf(f, "%d ", arr[i][j]);
-                        } else if (show_mode == SHOW_LVCHAR) {
-                            if (content[i >> 1][j >> 1] != NULL && !ii) {
-                                fprintf(f, "%c%c", content[i >> 1][j >> 1][jj*2], content[i >> 1][j >> 1][jj*2 + 1]);
-                            } else if (lvchar[arr[i][j]]) {
-                                fprintf(f, "%s", lvchar[arr[i][j]]);
-                            } else {
+                        switch (show_mode) {
+                            case SHOW_LV:
+                                fprintf(f, "%d ", arr[i][j]);
+                                break;
+                            case SHOW_LVCHAR:
+                                if (con != NULL && !ii) {                                
+                                    if (jj * 2 < strlen(con))
+                                        fprintf(f, "%c%c", 
+                                                con[jj * 2], con[jj * 2 + 1]);
+                                    else
+                                        fprintf(f, "  ");
+                                } else if (lvchar[arr[i][j]]) {
+                                    fprintf(f, "%s", lvchar[arr[i][j]]);
+                                } else {
+                                    fprintf(f, "  ");
+                                }
+                                break;
+                            default:    
                                 fprintf(f, "  ");
-                            }
-                        } else {
-                            fprintf(f, "  ");
+                                break;
                         }
                     }
                 }
